@@ -2,8 +2,27 @@ import discord
 from discord.ext import commands 
 import random
 from random import choice
+import asyncio
 
 bc = commands.Bot(command_prefix='#')
+
+async def chpr():
+    await bc.wait_until_ready()
+
+    stats = [
+        f"with Beer", f"with Fire", f"in {len(bc.guilds)} servers"
+    ]
+
+    while not bc.is_closed():
+
+        status = random.choice(stats)
+
+        await bc.change_presence(activity=discord.Game(name=status))
+
+        await asyncio.sleep(10)
+
+
+bc.loop.create_task(chpr())
 
 @bc.event()
 async def on_ready():
@@ -97,5 +116,7 @@ async def unban(ctx, member):
   member = await bc.fetch_user(int(member))
   await ctx.guild.unban(member)
   await ctx.send(f"unbanned {member.name}")
+  
+
   
 bc.run('YOUR_TOKEN_HERE')
