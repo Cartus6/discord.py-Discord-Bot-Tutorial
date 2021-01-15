@@ -5,15 +5,15 @@ from random import choice
 
 bc = commands.Bot(command_prefix='#')
 
-@bc.event()
+@bc.event
 async def on_ready():
   print('bot is ready')
 
-@bc.event()
+@bc.event
 async def on_member_join(member):
   print(f'{member} has joined a server with your bot')
 
-@bc.event()
+@bc.event
 async def on_member_remove(member):
   print(f'{member} has left a server with your bot')
 
@@ -32,7 +32,7 @@ async def _8ball(ctx, *, question):
 
 @bc.command()
 async def ping(ctx):
-  await ctx.send(f'Pong! `{round(self.bc.latency * 1000)}ms`')
+  await ctx.send(f'Pong! `{round(bc.latency * 1000)}ms`')
   
 @bc.command(pass_context=True)
 @commands.has_permissions(manage_guild=True)
