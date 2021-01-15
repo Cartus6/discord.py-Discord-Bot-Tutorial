@@ -2,18 +2,19 @@ import discord
 from discord.ext import commands 
 import random
 from random import choice
+import asyncio
 
 bc = commands.Bot(command_prefix='#')
 
-@bc.event()
+@bc.event
 async def on_ready():
   print('bot is ready')
 
-@bc.event()
+@bc.event
 async def on_member_join(member):
   print(f'{member} has joined a server with your bot')
 
-@bc.event()
+@bc.event
 async def on_member_remove(member):
   print(f'{member} has left a server with your bot')
 
@@ -32,7 +33,7 @@ async def _8ball(ctx, *, question):
 
 @bc.command()
 async def ping(ctx):
-  await ctx.send(f'Pong! `{round(self.bc.latency * 1000)}ms`')
+  await ctx.send(f'Pong! `{round(bc.latency * 1000)}ms`')
   
 @bc.command(pass_context=True)
 @commands.has_permissions(manage_guild=True)
@@ -48,14 +49,6 @@ async def takerole(ctx, member:discord.Member, *, role:discord.Role = None):
   await member.remove_roles(role)
   await ctx.send(f'{role} was taken from {member}')
   
-@bc.command()
-@commands.has_permissions(manage_guild=True)
-async def kick(ctx, member: discord.Member, *, Reason="No reason specified"):
-  user = member
-  await ctx.message.delete()
-  await ctx.send(f'successfully kicked {user}')
-  await user.send(f"you were kicked from `{ctx.guild.name}` for the following reason:\n\n**{reason}**")
-  await member.kick(reason=reason)
 
 @bc.command()
 @commands.has_permissions(manage_guild=True)
@@ -63,28 +56,12 @@ async def kick(ctx, member: discord.Member, *, Reason="No reason specified"):
   user = member
   await ctx.message.delete()
   await ctx.send(f'successfully banned {user}')
-  await user.send(f"you were banned from `{ctx.guild.name}` for the following reason:\n\n**{reason}**")
-  await member.ban(reason=reason) 
-
-@bc.command()
-@commands.has_permissions(ban_members=True)
-async def unban(ctx, member):
-  member = await self.bc.fetch_user(int(member))
-  await ctx.guild.unban(member)
-  await ctx.send(f"unbanned {member.name}")
-
-@bc.command()
-@commands.has_permissions(manage_guild=True)
-async def kick(ctx, member: discord.Member, *, Reason="No reason specified"):
-  user = member
-  await ctx.message.delete()
-  await ctx.send(f'successfully kicked {user}')
   await user.send(f"you were kicked from `{ctx.guild.name}` for the following reason:\n\n**{reason}**")
-  await member.kick(reason=reason)
+  await member.kick(reason=reason) 
 
 @bc.command()
 @commands.has_permissions(manage_guild=True)
-async def kick(ctx, member: discord.Member, *, Reason="No reason specified"):
+async def ban(ctx, member: discord.Member, *, Reason="No reason specified"):
   user = member
   await ctx.message.delete()
   await ctx.send(f'successfully banned {user}')
@@ -97,5 +74,12 @@ async def unban(ctx, member):
   member = await bc.fetch_user(int(member))
   await ctx.guild.unban(member)
   await ctx.send(f"unbanned {member.name}")
+
+@bc.command()
+@commands.has_permissions(manage_messages=True)
+async def purge(ctx,amount=5):
+  await ctx.channel.purge(limit=1 + amount)
+  
+
   
 bc.run('YOUR_TOKEN_HERE')
