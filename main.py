@@ -89,11 +89,14 @@ async def ban(ctx, member: discord.Member, *, Reason="No reason specified"):
 @bc.command()
 @commands.has_permissions(ban_members=True)
 async def unban(ctx, member):
-  member = await self.bc.fetch_user(int(member))
+  member = await bc.fetch_user(int(member))
   await ctx.guild.unban(member)
   await ctx.send(f"unbanned {member.name}")
 
-
+@bc.command()
+@commands.has_permissions(manage_messages=True)
+async def purge(ctx,amount=5):
+  await ctx.channel.purge(limit=1 + amount)
   
 
   
