@@ -5,15 +5,15 @@ from random import choice
 
 bc = commands.Bot(command_prefix='#')
 
-@bc.event()
+@bc.event
 async def on_ready():
   print('bot is ready')
 
-@bc.event()
+@bc.event
 async def on_member_join(member):
   print(f'{member} has joined a server with your bot')
 
-@bc.event()
+@bc.event
 async def on_member_remove(member):
   print(f'{member} has left a server with your bot')
 
@@ -32,7 +32,7 @@ async def _8ball(ctx, *, question):
 
 @bc.command()
 async def ping(ctx):
-  await ctx.send(f'Pong! `{round(self.bc.latency * 1000)}ms`')
+  await ctx.send(f'Pong! `{round(bc.latency * 1000)}ms`')
   
 @bc.command(pass_context=True)
 @commands.has_permissions(manage_guild=True)
@@ -59,7 +59,7 @@ async def kick(ctx, member: discord.Member, *, Reason="No reason specified"):
 
 @bc.command()
 @commands.has_permissions(manage_guild=True)
-async def kick(ctx, member: discord.Member, *, Reason="No reason specified"):
+async def ban(ctx, member: discord.Member, *, Reason="No reason specified"):
   user = member
   await ctx.message.delete()
   await ctx.send(f'successfully banned {user}')
@@ -69,8 +69,9 @@ async def kick(ctx, member: discord.Member, *, Reason="No reason specified"):
 @bc.command()
 @commands.has_permissions(ban_members=True)
 async def unban(ctx, member):
-  member = await self.bc.fetch_user(int(member))
+  member = await bc.fetch_user(int(member))
   await ctx.guild.unban(member)
   await ctx.send(f"unbanned {member.name}")
   
+
 bc.run('YOUR_TOKEN_HERE')
