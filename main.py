@@ -45,7 +45,7 @@ async def on_member_remove(member):
 @bc.event
 async def on_message(msg):
     if not msg.author.bot:
-        if msg.author.id in bc.blacklisted_users and msg.content.lower().startswith("PREFIX") # Replace prefix with your prefix
+        if msg.author.id in bc.blacklisted_users and msg.content.lower().startswith("PREFIX"): # Replace prefix with your prefix
             return await msg.channel.send("It appears you are blacklisted!")
         
         if not msg.guild:
