@@ -36,6 +36,13 @@ async def on_member_join(member):
 async def on_member_remove(member):
   print(f'{member} has left a server with your bot')
 
+@bc.event
+async def on_message(msg):
+    if not msg.author.bot:
+        if not msg.guild:
+            channel = bc.get_channel(CHANNEL) # Replace CHANNEL with your modmail channel id
+            await channel.send(f"User **{msg.author}** sent a report saying `{msg.content}`")
+
 @bc.command(aliases=['eightball', '8ball'])
 async def _8ball(ctx, *, question):
   responses = [
