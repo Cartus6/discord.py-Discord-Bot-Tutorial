@@ -51,6 +51,7 @@ async def on_message(msg):
         if not msg.guild:
             channel = bc.get_channel(CHANNEL) # Replace CHANNEL with your modmail channel id
             await channel.send(f"User **{msg.author}** sent a report saying `{msg.content}`")
+        await bc.process_commands(msg)
            
 @bc.command()
 async def blacklist(ctx, user:discord.Member):
