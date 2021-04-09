@@ -49,3 +49,6 @@ class Moderation(commands.Cog):
   @commands.has_permissions(manage_messages=True)
   async def purge(ctx,amount=5):
     await ctx.channel.purge(limit=1 + amount)
+
+def setup(bc):
+   bc.add_cog(Moderation(bc))
