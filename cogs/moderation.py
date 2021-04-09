@@ -7,14 +7,14 @@ class Moderation(commands.Cog):
     
   @commands.command()
   @commands.has_permissions(manage_guild=True)
-  async def addrole(ctx, member:discord.Member, *, role:discord.Role = None):
+  async def addrole(self, ctx, member:discord.Member, *, role:discord.Role = None):
     await ctx.message.delete()
     await member.add_roles(role)
     await ctx.send(f'{member} Was Given {role}')
 
   @commands.command()
   @commands.has_permissions(manage_guild=True)
-  async def takerole(ctx, member:discord.Member, *, role:discord.Role = None):
+  async def takerole(self, ctx, member:discord.Member, *, role:discord.Role = None):
     await ctx.message.delete()
     await member.remove_roles(role)
     await ctx.send(f'{role} was taken from {member}')
@@ -22,7 +22,7 @@ class Moderation(commands.Cog):
 
   @commands.command()
   @commands.has_permissions(manage_guild=True)
-  async def kick(ctx, member: discord.Member, *, Reason="No reason specified"):
+  async def kick(self, ctx, member: discord.Member, *, Reason="No reason specified"):
     user = member
     await ctx.message.delete()
     await ctx.send(f'successfully banned {user}')
@@ -31,7 +31,7 @@ class Moderation(commands.Cog):
 
   @commands.command()
   @commands.has_permissions(manage_guild=True)
-  async def ban(ctx, member: discord.Member, *, Reason="No reason specified"):
+  async def ban(self, ctx, member: discord.Member, *, Reason="No reason specified"):
     user = member
     await ctx.message.delete()
     await ctx.send(f'successfully banned {user}')
@@ -40,14 +40,14 @@ class Moderation(commands.Cog):
 
   @commands.command()
   @commands.has_permissions(ban_members=True)
-  async def unban(ctx, member):
-    member = await bc.fetch_user(int(member))
+  async def unban(self, ctx, member):
+    member = await self.bc.fetch_user(int(member))
     await ctx.guild.unban(member)
     await ctx.send(f"unbanned {member.name}")
 
   @commands.command()
   @commands.has_permissions(manage_messages=True)
-  async def purge(ctx,amount=5):
+  async def purge(self, ctx,amount=5):
     await ctx.channel.purge(limit=1 + amount)
 
 def setup(bc):
