@@ -137,8 +137,4 @@ def write_json(data, filename):
     with open(f"{filename}.json", "w") as f:
         json.dump(data, f, indent=4)
 
-if __name__ == "__main__":
-    for filename in os.listdir("cogs"):
-        if filename.endswith(".py") and not filename.startswith("_"):
-            bc.load_extension(f"cogs.{filename[:-3]}")
 bc.run('YOUR_TOKEN_HERE')
