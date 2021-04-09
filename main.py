@@ -65,68 +65,6 @@ async def unblacklist(ctx, user:discord.Member):
     data = read_json("blacklist")
     data["blacklistedUsers"].remove(user.id)
     write_json(data, "blacklist")
-   
-@bc.command(aliases=['eightball', '8ball'])
-async def _8ball(ctx, *, question):
-  responses = [
-      "It is certain.", "It is decidedly so.", "Without a doubt.",
-      "Yes - definitely.", "As I see it, yes.", "Most likely.",
-      "Outlook good.", "Yes.", "Signs point to yes.",
-      "Reply hazy, try again.", "Ask again later.",
-      "Better not tell you now.", "Concentrate and ask again.",
-      "Don't count on it.", "My reply is no.", "My sources say no.",
-      "Outlook not so good.", "Very doubtful."
-  ]
-  await ctx.send(f'Question: {question}\nAnswer: {random.choice(responses)}')
-
-@bc.command()
-async def ping(ctx):
-  await ctx.send(f'Pong! `{round(bc.latency * 1000)}ms`')
-  
-@bc.command(pass_context=True)
-@commands.has_permissions(manage_guild=True)
-async def addrole(ctx, member:discord.Member, *, role:discord.Role = None):
-  await ctx.message.delete()
-  await member.add_roles(role)
-  await ctx.send(f'{member} Was Given {role}')
-
-@bc.command(pass_context=True)
-@commands.has_permissions(manage_guild=True)
-async def takerole(ctx, member:discord.Member, *, role:discord.Role = None):
-  await ctx.message.delete()
-  await member.remove_roles(role)
-  await ctx.send(f'{role} was taken from {member}')
-  
-
-@bc.command()
-@commands.has_permissions(manage_guild=True)
-async def kick(ctx, member: discord.Member, *, Reason="No reason specified"):
-  user = member
-  await ctx.message.delete()
-  await ctx.send(f'successfully banned {user}')
-  await user.send(f"you were kicked from `{ctx.guild.name}` for the following reason:\n\n**{reason}**")
-  await member.kick(reason=reason) 
-
-@bc.command()
-@commands.has_permissions(manage_guild=True)
-async def ban(ctx, member: discord.Member, *, Reason="No reason specified"):
-  user = member
-  await ctx.message.delete()
-  await ctx.send(f'successfully banned {user}')
-  await user.send(f"you were banned from `{ctx.guild.name}` for the following reason:\n\n**{reason}**")
-  await member.ban(reason=reason) 
-
-@bc.command()
-@commands.has_permissions(ban_members=True)
-async def unban(ctx, member):
-  member = await bc.fetch_user(int(member))
-  await ctx.guild.unban(member)
-  await ctx.send(f"unbanned {member.name}")
-
-@bc.command()
-@commands.has_permissions(manage_messages=True)
-async def purge(ctx,amount=5):
-  await ctx.channel.purge(limit=1 + amount)
   
 def read_json(filename):
     with open(f"{filename}.json", "r") as f:
