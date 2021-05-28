@@ -25,6 +25,7 @@ bc = commands.Bot(command_prefix = get_prefix, owner_id=485513915548041239, inte
 bc.remove_command("help")
 bc.DEFAULT_PREFIX = "#"
 bc.blacklisted = {}
+bc.mute_data = {}
 
 async def chpr():
     await bc.wait_until_ready()
@@ -47,6 +48,11 @@ bc.loop.create_task(chpr())
 async def on_ready():
     data = read_json("blacklist")
     bc.blacklisted = data["blacklistedUsers"]
+    current_mutes = await bc.mutes.get_all()
+
+    for mute in current_mutes:
+        bc.mute_data[mute["_id"]] = mute
+    print('bot online')
 
 @bc.event
 async def on_member_join(member):
@@ -96,6 +102,7 @@ if __name__ == "__main__":
     bc.mongo = motor.motor_asyncio.AsyncIOMotorClient("MONGO-URL")
     bc.db = bc.mongo["example"]
     bc.prefixes = discordmongo.Mongo(connection_url=bc.db, dbname="prefixes")
+    bc.mutes = discordmongo.Mongo(connection_url=bc.db, dbname="mutes")
     for filename in os.listdir("cogs"):
         if filename.endswith(".py") and not filename.startswith("_"):
             bc.load_extension(f"cogs.{filename[:-3]}")
