@@ -1,20 +1,36 @@
 import discord
-from discord.ext import commands 
+from discord.ext import commands
 import random
 from random import choice
+import os
 import asyncio
 import json
-import os
+import discordmongo
+import motor.motor_asyncio
 
-bc = commands.Bot(command_prefix='#')
-bc.blacklisted_users = {}
+async def get_prefix(bc, message):
+    if not message.guild:
+        return commands.when_mentioned_or(bc.DEFAULT_PREFIX)(bc,message)
 
+    try:
+        data = await bc.prefixes.find(message.guild.id)
+
+        if not data or "prefix" not in data:
+            return commands.when_mentioned_or(bc.DEFAULT_PREFIX)(bc, message)
+        return commands.when_mentioned_or(data["prefix"])(bc, message)
+    except:
+        return commands.when_mentioned_or(bc.DEFAULT_PREFIX)(bc, message)
+
+bc = commands.Bot(command_prefix = get_prefix, owner_id=485513915548041239, intents=discord.Intents.all())
+bc.remove_command("help")
+bc.DEFAULT_PREFIX = "#"
+bc.blacklisted = {}
 
 async def chpr():
     await bc.wait_until_ready()
 
     stats = [
-        f"with Beer", f"with Fire", f"in {len(bc.guilds)} servers"
+        "With Beer", "With Fire", f"in {len(bc.guilds)} servers"
     ]
 
     while not bc.is_closed():
@@ -25,47 +41,48 @@ async def chpr():
 
         await asyncio.sleep(10)
 
-
 bc.loop.create_task(chpr())
 
 @bc.event
 async def on_ready():
-  data = read_json("blacklist")
-  bc.blacklisted_users = data["blacklistedUsers"]
-  print('bot is ready')
+    data = read_json("blacklist")
+    bc.blacklisted = data["blacklistedUsers"]
 
 @bc.event
 async def on_member_join(member):
-
-   print(f'{member} has joined a server with your bot')
+    print(f'{member} joined a server with your bot!')
 
 @bc.event
 async def on_member_remove(member):
-  print(f'{member} has left a server with your bot')
+    print(f'{member} left a server with your bot :(')
 
 @bc.event
 async def on_message(msg):
+    data = read_json("blacklist")
+    bc.blacklisted = data["blacklistedUsers"]
     if not msg.author.bot:
-        if msg.author.id in bc.blacklisted_users and msg.content.lower().startswith("PREFIX"): # Replace prefix with your prefix
-            return await msg.channel.send("It appears you are blacklisted!")
-        
         if not msg.guild:
-            channel = bc.get_channel(CHANNEL) # Replace CHANNEL with your modmail channel id
+            channel = bc.get_channel(744176742540771371)
             await channel.send(f"User **{msg.author}** sent a report saying `{msg.content}`")
         await bc.process_commands(msg)
-           
+
 @bc.command()
-async def blacklist(ctx, user:discord.Member):
+@commands.is_owner()
+async def blacklist(ctx,user:discord.Member):
     data = read_json("blacklist")
     data["blacklistedUsers"].append(user.id)
-    write_json(data, "blacklist")
-    
+    write_json(data,"blacklist")
+    await ctx.send("I have blacklisted {} for you!".format(user))
+
 @bc.command()
-async def unblacklist(ctx, user:discord.Member):
+@commands.is_owner()
+async def unblacklist(ctx,user:discord.Member):
     data = read_json("blacklist")
     data["blacklistedUsers"].remove(user.id)
-    write_json(data, "blacklist")
-  
+    write_json(data,"blacklist")
+    await ctx.send("I have unblacklisted {} for you!".format(user))
+
+
 def read_json(filename):
     with open(f"{filename}.json", "r") as f:
         data = json.load(f)
@@ -76,7 +93,11 @@ def write_json(data, filename):
         json.dump(data, f, indent=4)
 
 if __name__ == "__main__":
+    bc.mongo = motor.motor_asyncio.AsyncIOMotorClient("MONGO-URL")
+    bc.db = bc.mongo["example"]
+    bc.prefixes = discordmongo.Mongo(connection_url=bc.db, dbname="prefixes")
     for filename in os.listdir("cogs"):
         if filename.endswith(".py") and not filename.startswith("_"):
             bc.load_extension(f"cogs.{filename[:-3]}")
-bc.run('YOUR_TOKEN_HERE')
+
+bc.run("TOKEN")
