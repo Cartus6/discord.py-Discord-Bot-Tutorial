@@ -38,8 +38,8 @@ Never gonna tell a lie and hurt you
 
 (Ooh, give you up)
 (Ooh, give you up)
-Never gonna give, never gonna give
-(Give you up)
+
+
 Never gonna give, never gonna give
 (Give you up)
 
